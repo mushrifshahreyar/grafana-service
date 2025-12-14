@@ -1,0 +1,25 @@
+server:
+  http_listen_port: 3200
+ 
+distributor:
+  receivers:
+    otlp:
+      protocols:
+        http:
+        grpc:
+ 
+metrics_generator:
+  enabled: true
+  processor:
+    service_graphs:
+      enabled: true
+    span_metrics:
+      enabled: true
+  storage:
+    path: /tmp/tempo/generator
+ 
+storage:
+  trace:
+    backend: local
+    local:
+      path: /tmp/tempo/traces
