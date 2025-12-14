@@ -1,59 +1,347 @@
 {
   "id": null,
-  "title": "APM Overview (Starter)",
-  "tags": ["apm", "otel"],
+  "uid": "apm-prod-datadog-parity-final",
+  "title": "APM – Service Overview (Production)",
+  "tags": [
+    "apm",
+    "otel",
+    "micrometer",
+    "webflux"
+  ],
   "timezone": "browser",
   "schemaVersion": 36,
   "version": 1,
   "refresh": "10s",
+  "templating": {
+    "list": [
+      {
+        "name": "service",
+        "type": "query",
+        "datasource": "Prometheus",
+        "query": "label_values(http_server_requests_seconds_count, service)",
+        "multi": false
+      },
+      {
+        "name": "endpoint",
+        "type": "query",
+        "datasource": "Prometheus",
+        "query": "label_values(http_server_requests_seconds_count{service=\"$service\",uri!~\"/\\\\*\\\\*|/error|/actuator.*|UNKNOWN\"}, uri)",
+        "multi": true,
+        "includeAll": true
+      },
+      {
+        "name": "status",
+        "type": "query",
+        "datasource": "Prometheus",
+        "query": "label_values(http_server_requests_seconds_count, status)",
+        "multi": true,
+        "includeAll": true
+      }
+    ]
+  },
   "panels": [
     {
-      "type": "timeseries",
-      "title": "Request Rate (req/sec)",
+      "type": "stat",
+      "title": "p50 Latency (ms)",
       "targets": [
         {
-          "expr": "rate(http_server_duration_count[1m])",
-          "legendFormat": "{{service}} {{route}}",
-          "datasource": "Prometheus"
+          "expr": "clamp_min(histogram_quantile(0.50, sum by (le)(rate(http_server_requests_seconds_bucket{service=\"$service\",uri!~\"/\\\\*\\\\*|/error|/actuator.*|UNKNOWN\"}[5m]))) * 1000, 0)"
         }
       ],
-      "gridPos": { "x": 0, "y": 0, "w": 12, "h": 8 }
+      "gridPos": {
+        "x": 0,
+        "y": 0,
+        "w": 6,
+        "h": 4
+      }
     },
     {
-      "type": "timeseries",
-      "title": "Latency p95",
+      "type": "stat",
+      "title": "p75 Latency (ms)",
       "targets": [
         {
-          "expr": "histogram_quantile(0.95, sum(rate(http_server_duration_bucket[1m])) by (le))",
-          "legendFormat": "p95",
-          "datasource": "Prometheus"
+          "expr": "clamp_min(histogram_quantile(0.75, sum by (le)(rate(http_server_requests_seconds_bucket{service=\"$service\",uri!~\"/\\\\*\\\\*|/error|/actuator.*|UNKNOWN\"}[5m]))) * 1000, 0)"
         }
       ],
-      "gridPos": { "x": 12, "y": 0, "w": 12, "h": 8 }
+      "gridPos": {
+        "x": 6,
+        "y": 0,
+        "w": 6,
+        "h": 4
+      }
     },
     {
-      "type": "timeseries",
-      "title": "Error Rate",
+      "type": "stat",
+      "title": "p90 Latency (ms)",
       "targets": [
-        {
-          "expr": "rate(http_server_duration_count{status=~\"5..\"}[1m])",
-          "legendFormat": "errors",
-          "datasource": "Prometheus"
+         {
+          "expr": "clamp_min(histogram_quantile(0.90, sum by (le)(rate(http_server_requests_seconds_bucket{service=\"$service\",uri!~\"/\\\\*\\\\*|/error|/actuator.*|UNKNOWN\"}[5m]))) * 1000, 0)"
         }
       ],
-      "gridPos": { "x": 0, "y": 8, "w": 12, "h": 8 }
+      "gridPos": {
+        "x": 12,
+        "y": 0,
+        "w": 6,
+        "h": 4
+      }
+    },
+    {
+      "type": "stat",
+      "title": "p95 Latency (ms)",
+      "targets": [
+        {
+          "expr": "clamp_min(histogram_quantile(0.95, sum by (le)(rate(http_server_requests_seconds_bucket{service=\"$service\",uri!~\"/\\\\*\\\\*|/error|/actuator.*|UNKNOWN\"}[5m]))) * 1000, 0)"
+        }
+      ],
+      "gridPos": {
+        "x": 18,
+        "y": 0,
+        "w": 6,
+        "h": 4
+      }
+    },
+    {
+      "type": "stat",
+      "title": "Requests / sec",
+      "targets": [
+        {
+          "expr": "sum(rate(http_server_requests_seconds_count{service=\"$service\",uri!~\"/\\\\*\\\\*|/error|/actuator.*|UNKNOWN\"}[1m]))"
+        }
+      ],
+      "gridPos": {
+        "x": 0,
+        "y": 4,
+        "w": 6,
+        "h": 4
+      }
+    },
+    {
+      "type": "stat",
+      "title": "Errors / sec",
+      "targets": [
+        {
+          "expr": "sum(rate(http_server_requests_seconds_count{service=\"$service\",status=~\"4..|5..\",uri!~\"/\\\\*\\\\*|/error|/actuator.*|UNKNOWN\"}[1m]))"
+        }
+      ],
+      "gridPos": {
+        "x": 6,
+        "y": 4,
+        "w": 6,
+        "h": 4
+      }
+    },
+    {
+      "type": "stat",
+      "title": "Error Rate %",
+      "targets": [
+       {
+          "expr": "(sum(rate(http_server_requests_seconds_count{service=\"$service\",status=~\"4..|5..\",uri!~\"/\\\\*\\\\*|/error|/actuator.*|UNKNOWN\"}[1m])) / sum(rate(http_server_requests_seconds_count{service=\"$service\",uri!~\"/\\\\*\\\\*|/error|/actuator.*|UNKNOWN\"}[1m]))) * 100"
+        }
+      ],
+      "gridPos": {
+        "x": 12,
+        "y": 4,
+        "w": 6,
+        "h": 4
+      }
+    },
+    {
+      "type": "stat",
+      "title": "Total Requests",
+      "targets": [
+        {
+          "expr": "sum(http_server_requests_seconds_count{service=\"$service\",uri!~\"/\\\\*\\\\*|/error|/actuator.*|UNKNOWN\"})"
+        }
+      ],
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "center",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ]
+        }
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "fixed",
+            "fixedColor": "green"
+          }
+        }
+      },
+      "gridPos": {
+        "x": 18,
+        "y": 4,
+        "w": 6,
+        "h": 4
+      }
     },
     {
       "type": "table",
-      "title": "Top Endpoints by Latency",
+      "title": "Endpoint Latency (ms)",
       "targets": [
         {
-          "expr": "sum(rate(http_server_duration_sum[1m])) by (service, route) / sum(rate(http_server_duration_count[1m])) by (service, route)",
-          "legendFormat": "{{service}} {{route}}",
-          "datasource": "Prometheus"
+          "expr": "sum by (uri)(rate(http_server_requests_seconds_count{service=\"$service\",uri=~\"$endpoint\",uri!~\"/\\\\*\\\\*|/error|/actuator.*|UNKNOWN\"}[5m]))",
+          "refId": "A"
+        },
+        {
+          "expr": "clamp_min(histogram_quantile(0.5, sum by (le, uri)(rate(http_server_requests_seconds_bucket{service=\"$service\",uri=~\"$endpoint\",uri!~\"/\\\\*\\\\*|/error|/actuator.*|UNKNOWN\"}[5m]))) * 1000, 0)",
+          "refId": "B"
+        },
+        {
+          "expr": "clamp_min(histogram_quantile(0.75, sum by (le, uri)(rate(http_server_requests_seconds_bucket{service=\"$service\",uri=~\"$endpoint\",uri!~\"/\\\\*\\\\*|/error|/actuator.*|UNKNOWN\"}[5m]))) * 1000, 0)",
+          "refId": "C"
+        },
+        {
+          "expr": "clamp_min(histogram_quantile(0.90, sum by (le, uri)(rate(http_server_requests_seconds_bucket{service=\"$service\",uri=~\"$endpoint\",uri!~\"/\\\\*\\\\*|/error|/actuator.*|UNKNOWN\"}[5m]))) * 1000, 0)",
+          "refId": "D"
+        },
+        {
+          "expr": "clamp_min(histogram_quantile(0.95, sum by (le, uri)(rate(http_server_requests_seconds_bucket{service=\"$service\",uri=~\"$endpoint\",uri!~\"/\\\\*\\\\*|/error|/actuator.*|UNKNOWN\"}[5m]))) * 1000, 0)",
+          "refId": "E"
         }
       ],
-      "gridPos": { "x": 12, "y": 8, "w": 12, "h": 8 }
+      "transformations": [
+        {
+          "id": "labelsToFields"
+        },
+        {
+          "id": "merge"
+        },
+        {
+          "id": "organize",
+          "options": {
+            "order": [
+              "uri",
+              "Value #A",
+              "Value #B",
+              "Value #C",
+              "Value #D",
+              "Value #E"
+            ],
+            "renameByName": {
+              "Value #A": "Requests/sec",
+              "Value #B": "p50 (ms)",
+              "Value #C": "p75 (ms)",
+              "Value #D": "p90 (ms)",
+              "Value #E": "p95 (ms)"
+            }
+          }
+        }
+      ],
+      "options": {
+        "showHeader": true
+      },
+      "gridPos": {
+        "x": 0,
+        "y": 8,
+        "w": 24,
+        "h": 9
+      }
+    },
+    {
+      "type": "table",
+      "title": "Slow Endpoints (p95 > 1s)",
+      "targets": [
+        {
+          "expr": "clamp_min(histogram_quantile(0.95, sum by (le, uri)(rate(http_server_requests_seconds_bucket{service=\"$service\",uri=~\"$endpoint\",uri!~\"/\\\\*\\\\*|/error|/actuator.*|UNKNOWN\"}[5m]))) * 1000, 0) > 1000"
+        }
+      ],
+      "gridPos": {
+        "x": 0,
+        "y": 17,
+        "w": 24,
+        "h": 6
+      }
+    },
+    {
+      "type": "table",
+      "title": "Top Errors (4xx / 5xx)",
+      "targets": [
+        {
+          "expr": "sum by (uri, status)(rate(http_server_requests_seconds_count{service=\"$service\",status=~\"4..|5..\",uri!~\"/\\\\*\\\\*|/error|/actuator.*|UNKNOWN\"}[5m]))"
+        }
+      ],
+      "transformations": [
+        {
+          "id": "labelsToFields"
+        },
+        {
+          "id": "merge"
+        },
+        {
+          "id": "organize",
+          "options": {
+            "order": [
+              "uri",
+              "status",
+              "Value"
+            ],
+            "renameByName": {
+              "Value": "Errors/sec"
+            }
+          }
+        }
+      ],
+      "options": {
+        "showHeader": true
+      },
+      "gridPos": {
+        "x": 0,
+        "y": 23,
+        "w": 24,
+        "h": 7
+      }
+    },
+    {
+      "type": "timeseries",
+      "title": "JVM Heap Used",
+      "targets": [
+        {
+          "expr": "jvm_memory_used_bytes{area=\"heap\",service=\"$service\"}",
+          "legendFormat": "heap"
+        }
+      ],
+      "gridPos": {
+        "x": 0,
+        "y": 30,
+        "w": 12,
+        "h": 6
+      }
+    },
+    {
+      "type": "timeseries",
+      "title": "CPU Usage",
+      "targets": [
+        {
+          "expr": "process_cpu_usage{service=\"$service\"}",
+          "legendFormat": "cpu"
+        }
+      ],
+      "gridPos": {
+        "x": 12,
+        "y": 30,
+        "w": 12,
+        "h": 6
+      }
+    },
+    {
+      "type": "timeseries",
+      "title": "GC Pause Time",
+      "targets": [
+        {
+          "expr": "rate(jvm_gc_pause_seconds_sum{service=\"$service\"}[1m])",
+          "legendFormat": "gc"
+        }
+      ],
+      "gridPos": {
+        "x": 0,
+        "y": 36,
+        "w": 24,
+        "h": 6
+      }
     }
   ]
 }

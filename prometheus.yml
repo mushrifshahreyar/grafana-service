@@ -10,3 +10,23 @@ scrape_configs:
   - job_name: "prometheus"
     static_configs:
       - targets: ["prometheus:9090"]  # Self-monitoring (keep)
+
+  - job_name: "arbiter"
+    metrics_path: /actuator/prometheus
+    static_configs:
+      - targets: ["host.docker.internal:8888"]
+
+  - job_name: "site-device-service"
+    metrics_path: /actuator/prometheus
+    static_configs:
+      - targets: ["host.docker.internal:8181"]
+
+  - job_name: "task-service"
+    metrics_path: /actuator/prometheus
+    static_configs:
+      - targets: ["host.docker.internal:8182"]
+
+  - job_name: "enlighten-java-service"
+    metrics_path: /actuator/prometheus
+    static_configs:
+      - targets: ["host.docker.internal:9898"]

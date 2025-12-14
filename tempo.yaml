@@ -9,6 +9,11 @@ distributor:
           endpoint: 0.0.0.0:4317
         http: {}
 
+metrics_generator:
+  processor:
+    service_graphs: {}
+    span_metrics: {}
+
 storage:
   trace:
     backend: local
