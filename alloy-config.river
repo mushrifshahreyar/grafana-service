@@ -1,4 +1,4 @@
-otelcol.receiver.otlp "otlp" {
+otelcol.receiver.otlp "default" {
   grpc {
     endpoint = "0.0.0.0:4317"
   }
@@ -7,18 +7,31 @@ otelcol.receiver.otlp "otlp" {
   }
 
   output {
-    traces = [otelcol.processor.batch.batch.input]
+    traces  = [otelcol.processor.batch.default.input]
   }
 }
 
-otelcol.processor.batch "batch_traces" {
+otelcol.processor.batch "default" {
   output {
-    traces = [otelcol.exporter.otlp.tempo.input]
+    traces  = [otelcol.exporter.otlp.tempo.input]
   }
 }
 
 otelcol.exporter.otlp "tempo" {
   client {
     endpoint = "tempo:4317"
+    tls {
+      insecure = true
+    }
   }
+}
+
+prometheus.exporter.self "default" {}
+
+prometheus.scrape "java_app" {
+  targets = [{
+    __address__ = "host.docker.internal:8181",
+    service    = "site-device-service",
+  }]
+  forward_to = []
 }

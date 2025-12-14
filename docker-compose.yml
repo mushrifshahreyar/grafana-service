@@ -11,10 +11,9 @@ services:
     volumes:
       - ./alloy-config.river:/etc/alloy/config.alloy
     ports:
-      - "4317:4317"    # OTLP gRPC
-      - "4318:4318"    # OTLP HTTP
+      - "14317:4317"    # OTLP gRPC
+      - "14318:4318"    # OTLP HTTP
       - "12345:12345"  # Alloy UI
-      - "12346:12346"  # Alloy Prometheus metrics
     restart: unless-stopped
 
   prometheus:
@@ -33,7 +32,24 @@ services:
     volumes:
       - ./tempo.yaml:/etc/tempo.yaml
     ports:
-      - "3200:3200"   # Tempo Query API
+      - "3200:3200"
+      - "14517:4317"
+      - "14518:4318"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3200/ready"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    restart: unless-stopped
+
+  loki:
+    image: grafana/loki:latest
+    container_name: loki
+    command: ["-config.file=/etc/loki/local-config.yaml"]
+    volumes:
+      - ./loki-local-config.yaml:/etc/loki/local-config.yaml
+    ports:
+      - "3100:3100"
     restart: unless-stopped
 
   grafana:
@@ -49,6 +65,7 @@ services:
     depends_on:
       - prometheus
       - tempo
+      - loki 
       - alloy
     restart: unless-stopped
 

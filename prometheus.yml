@@ -3,9 +3,10 @@ global:
 
 scrape_configs:
   - job_name: "alloy"
+    metrics_path: /metrics
     static_configs:
-      - targets: ["alloy:12345"]
+      - targets: ["alloy:12345"]  # ONLY your Java app HTTP metrics
 
   - job_name: "prometheus"
     static_configs:
-      - targets: ["prometheus:9090"]
+      - targets: ["prometheus:9090"]  # Self-monitoring (keep)
