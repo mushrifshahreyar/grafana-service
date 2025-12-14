@@ -42,107 +42,65 @@
   "panels": [
     {
       "type": "stat",
-      "title": "p50 Latency (ms)",
-      "targets": [
-        {
-          "expr": "clamp_min(histogram_quantile(0.50, sum by (le)(rate(http_server_requests_seconds_bucket{service=\"$service\",uri!~\"/\\\\*\\\\*|/error|/actuator.*|UNKNOWN\"}[5m]))) * 1000, 0)"
-        }
-      ],
+      "title": "Requests / sec",
       "gridPos": {
         "x": 0,
         "y": 0,
         "w": 6,
         "h": 4
-      }
-    },
-    {
-      "type": "stat",
-      "title": "p75 Latency (ms)",
-      "targets": [
-        {
-          "expr": "clamp_min(histogram_quantile(0.75, sum by (le)(rate(http_server_requests_seconds_bucket{service=\"$service\",uri!~\"/\\\\*\\\\*|/error|/actuator.*|UNKNOWN\"}[5m]))) * 1000, 0)"
-        }
-      ],
-      "gridPos": {
-        "x": 6,
-        "y": 0,
-        "w": 6,
-        "h": 4
-      }
-    },
-    {
-      "type": "stat",
-      "title": "p90 Latency (ms)",
-      "targets": [
-         {
-          "expr": "clamp_min(histogram_quantile(0.90, sum by (le)(rate(http_server_requests_seconds_bucket{service=\"$service\",uri!~\"/\\\\*\\\\*|/error|/actuator.*|UNKNOWN\"}[5m]))) * 1000, 0)"
-        }
-      ],
-      "gridPos": {
-        "x": 12,
-        "y": 0,
-        "w": 6,
-        "h": 4
-      }
-    },
-    {
-      "type": "stat",
-      "title": "p95 Latency (ms)",
-      "targets": [
-        {
-          "expr": "clamp_min(histogram_quantile(0.95, sum by (le)(rate(http_server_requests_seconds_bucket{service=\"$service\",uri!~\"/\\\\*\\\\*|/error|/actuator.*|UNKNOWN\"}[5m]))) * 1000, 0)"
-        }
-      ],
-      "gridPos": {
-        "x": 18,
-        "y": 0,
-        "w": 6,
-        "h": 4
-      }
-    },
-    {
-      "type": "stat",
-      "title": "Requests / sec",
+      },
       "targets": [
         {
           "expr": "sum(rate(http_server_requests_seconds_count{service=\"$service\",uri!~\"/\\\\*\\\\*|/error|/actuator.*|UNKNOWN\"}[1m]))"
         }
       ],
-      "gridPos": {
-        "x": 0,
-        "y": 4,
-        "w": 6,
-        "h": 4
+      "fieldConfig": {
+        "defaults": {
+          "unit": "reqps",
+          "decimals": 2
+        }
       }
     },
     {
       "type": "stat",
       "title": "Errors / sec",
+      "gridPos": {
+        "x": 6,
+        "y": 0,
+        "w": 6,
+        "h": 4
+      },
       "targets": [
         {
           "expr": "sum(rate(http_server_requests_seconds_count{service=\"$service\",status=~\"4..|5..\",uri!~\"/\\\\*\\\\*|/error|/actuator.*|UNKNOWN\"}[1m]))"
         }
       ],
-      "gridPos": {
-        "x": 6,
-        "y": 4,
-        "w": 6,
-        "h": 4
+      "fieldConfig": {
+        "defaults": {
+          "unit": "reqps",
+          "decimals": 2
+        }
       }
     },
     {
       "type": "stat",
       "title": "Error Rate %",
+      "gridPos": {
+        "x": 12,
+        "y": 0,
+        "w": 6,
+        "h": 4
+      },
       "targets": [
-       {
+        {
           "expr": "(sum(rate(http_server_requests_seconds_count{service=\"$service\",status=~\"4..|5..\",uri!~\"/\\\\*\\\\*|/error|/actuator.*|UNKNOWN\"}[1m])) / sum(rate(http_server_requests_seconds_count{service=\"$service\",uri!~\"/\\\\*\\\\*|/error|/actuator.*|UNKNOWN\"}[1m]))) * 100"
         }
       ],
-      "gridPos": {
-        "x": 12,
-        "y": 4,
-        "w": 6,
-        "h": 4
+      "fieldConfig": {
+        "defaults": {
+          "unit": "percent",
+          "decimals": 2
+        }
       }
     },
     {
@@ -173,9 +131,127 @@
       },
       "gridPos": {
         "x": 18,
+        "y": 0,
+        "w": 6,
+        "h": 4
+      }
+    },
+    {
+      "type": "stat",
+      "title": "p50 Latency (ms)",
+      "targets": [
+        {
+          "expr": "clamp_min(histogram_quantile(0.50, sum by (le)(rate(http_server_requests_seconds_bucket{service=\"$service\",uri!~\"/\\\\*\\\\*|/error|/actuator.*|UNKNOWN\"}[5m]))) * 1000, 0)"
+        }
+      ],
+      "gridPos": {
+        "x": 0,
         "y": 4,
         "w": 6,
         "h": 4
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "ms",
+          "decimals": 1
+        }
+      }
+    },
+    {
+      "type": "stat",
+      "title": "p75 Latency (ms)",
+      "targets": [
+        {
+          "expr": "clamp_min(histogram_quantile(0.75, sum by (le)(rate(http_server_requests_seconds_bucket{service=\"$service\",uri!~\"/\\\\*\\\\*|/error|/actuator.*|UNKNOWN\"}[5m]))) * 1000, 0)"
+        }
+      ],
+      "gridPos": {
+        "x": 6,
+        "y": 4,
+        "w": 6,
+        "h": 4
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "ms",
+          "decimals": 1
+        }
+      }
+    },
+    {
+      "type": "stat",
+      "title": "p90 Latency (ms)",
+      "targets": [
+        {
+          "expr": "clamp_min(histogram_quantile(0.90, sum by (le)(rate(http_server_requests_seconds_bucket{service=\"$service\",uri!~\"/\\\\*\\\\*|/error|/actuator.*|UNKNOWN\"}[5m]))) * 1000, 0)"
+        }
+      ],
+      "gridPos": {
+        "x": 12,
+        "y": 4,
+        "w": 6,
+        "h": 4
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "ms",
+          "decimals": 1
+        }
+      }
+    },
+    {
+      "type": "stat",
+      "title": "p95 Latency (ms)",
+      "targets": [
+        {
+          "expr": "clamp_min(histogram_quantile(0.95, sum by (le)(rate(http_server_requests_seconds_bucket{service=\"$service\",uri!~\"/\\\\*\\\\*|/error|/actuator.*|UNKNOWN\"}[5m]))) * 1000, 0)"
+        }
+      ],
+      "gridPos": {
+        "x": 18,
+        "y": 4,
+        "w": 6,
+        "h": 4
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "ms",
+          "decimals": 1
+        }
+      }
+    },
+    {
+      "type": "timeseries",
+      "title": "Latency (p50 / p75 / p90 / p95)",
+      "gridPos": {
+        "x": 0,
+        "y": 8,
+        "w": 24,
+        "h": 6
+      },
+      "targets": [
+        {
+          "expr": "histogram_quantile(0.5, sum by (le)(rate(http_server_requests_seconds_bucket{service=\"$service\",uri!~\"/\\\\*\\\\*|/error|/actuator.*|UNKNOWN\"}[5m]))) * 1000",
+          "legendFormat": "p50"
+        },
+        {
+          "expr": "histogram_quantile(0.75, sum by (le)(rate(http_server_requests_seconds_bucket{service=\"$service\",uri!~\"/\\\\*\\\\*|/error|/actuator.*|UNKNOWN\"}[5m]))) * 1000",
+          "legendFormat": "p75"
+        },
+        {
+          "expr": "histogram_quantile(0.9, sum by (le)(rate(http_server_requests_seconds_bucket{service=\"$service\",uri!~\"/\\\\*\\\\*|/error|/actuator.*|UNKNOWN\"}[5m]))) * 1000",
+          "legendFormat": "p90"
+        },
+        {
+          "expr": "histogram_quantile(0.95, sum by (le)(rate(http_server_requests_seconds_bucket{service=\"$service\",uri!~\"/\\\\*\\\\*|/error|/actuator.*|UNKNOWN\"}[5m]))) * 1000",
+          "legendFormat": "p95"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "ms",
+          "decimals": 1
+        }
       }
     },
     {
@@ -183,24 +259,24 @@
       "title": "Endpoint Latency (ms)",
       "targets": [
         {
-          "expr": "sum by (uri)(rate(http_server_requests_seconds_count{service=\"$service\",uri=~\"$endpoint\",uri!~\"/\\\\*\\\\*|/error|/actuator.*|UNKNOWN\"}[5m]))",
-          "refId": "A"
+          "refId": "RPS",
+          "expr": "sum by (uri)(rate(http_server_requests_seconds_count{service=\"$service\",uri=~\"$endpoint\",uri!~\"/\\\\*\\\\*|/error|/actuator.*|UNKNOWN\"}[5m]))"
         },
         {
-          "expr": "clamp_min(histogram_quantile(0.5, sum by (le, uri)(rate(http_server_requests_seconds_bucket{service=\"$service\",uri=~\"$endpoint\",uri!~\"/\\\\*\\\\*|/error|/actuator.*|UNKNOWN\"}[5m]))) * 1000, 0)",
-          "refId": "B"
+          "refId": "P50",
+          "expr": "clamp_min(histogram_quantile(0.5, sum by (le, uri)(rate(http_server_requests_seconds_bucket{service=\"$service\",uri=~\"$endpoint\",uri!~\"/\\\\*\\\\*|/error|/actuator.*|UNKNOWN\"}[5m]))) * 1000, 0)"
         },
         {
-          "expr": "clamp_min(histogram_quantile(0.75, sum by (le, uri)(rate(http_server_requests_seconds_bucket{service=\"$service\",uri=~\"$endpoint\",uri!~\"/\\\\*\\\\*|/error|/actuator.*|UNKNOWN\"}[5m]))) * 1000, 0)",
-          "refId": "C"
+          "refId": "P75",
+          "expr": "clamp_min(histogram_quantile(0.75, sum by (le, uri)(rate(http_server_requests_seconds_bucket{service=\"$service\",uri=~\"$endpoint\",uri!~\"/\\\\*\\\\*|/error|/actuator.*|UNKNOWN\"}[5m]))) * 1000, 0)"
         },
         {
-          "expr": "clamp_min(histogram_quantile(0.90, sum by (le, uri)(rate(http_server_requests_seconds_bucket{service=\"$service\",uri=~\"$endpoint\",uri!~\"/\\\\*\\\\*|/error|/actuator.*|UNKNOWN\"}[5m]))) * 1000, 0)",
-          "refId": "D"
+          "refId": "P90",
+          "expr": "clamp_min(histogram_quantile(0.90, sum by (le, uri)(rate(http_server_requests_seconds_bucket{service=\"$service\",uri=~\"$endpoint\",uri!~\"/\\\\*\\\\*|/error|/actuator.*|UNKNOWN\"}[5m]))) * 1000, 0)"
         },
         {
-          "expr": "clamp_min(histogram_quantile(0.95, sum by (le, uri)(rate(http_server_requests_seconds_bucket{service=\"$service\",uri=~\"$endpoint\",uri!~\"/\\\\*\\\\*|/error|/actuator.*|UNKNOWN\"}[5m]))) * 1000, 0)",
-          "refId": "E"
+          "refId": "P95",
+          "expr": "clamp_min(histogram_quantile(0.95, sum by (le, uri)(rate(http_server_requests_seconds_bucket{service=\"$service\",uri=~\"$endpoint\",uri!~\"/\\\\*\\\\*|/error|/actuator.*|UNKNOWN\"}[5m]))) * 1000, 0)"
         }
       ],
       "transformations": [
@@ -213,32 +289,62 @@
         {
           "id": "organize",
           "options": {
+            "renameByName": {
+              "Value #RPS": "Requests / sec",
+              "Value #P50": "p50 latency",
+              "Value #P75": "p75 latency",
+              "Value #P90": "p90 latency",
+              "Value #P95": "p95 latency"
+            },
             "order": [
               "uri",
-              "Value #A",
-              "Value #B",
-              "Value #C",
-              "Value #D",
-              "Value #E"
-            ],
-            "renameByName": {
-              "Value #A": "Requests/sec",
-              "Value #B": "p50 (ms)",
-              "Value #C": "p75 (ms)",
-              "Value #D": "p90 (ms)",
-              "Value #E": "p95 (ms)"
-            }
+              "Requests / sec",
+              "p50 latency",
+              "p75 latency",
+              "p90 latency",
+              "p95 latency"
+            ]
           }
         }
       ],
-      "options": {
-        "showHeader": true
-      },
       "gridPos": {
         "x": 0,
-        "y": 8,
+        "y": 14,
         "w": 24,
-        "h": 9
+        "h": 6
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "ms",
+          "decimals": 1
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Requests / sec"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "reqps"
+              },
+              {
+                "id": "decimals",
+                "value": 2
+              }
+            ]
+          }
+        ]
+      },
+      "options": {
+        "showHeader": true,
+        "sortBy": [
+          {
+            "displayName": "p95 latency",
+            "desc": true
+          }
+        ]
       }
     },
     {
@@ -251,7 +357,7 @@
       ],
       "gridPos": {
         "x": 0,
-        "y": 17,
+        "y": 20,
         "w": 24,
         "h": 6
       }
@@ -290,7 +396,7 @@
       },
       "gridPos": {
         "x": 0,
-        "y": 23,
+        "y": 26,
         "w": 24,
         "h": 7
       }
@@ -306,7 +412,7 @@
       ],
       "gridPos": {
         "x": 0,
-        "y": 30,
+        "y": 33,
         "w": 12,
         "h": 6
       }
@@ -322,7 +428,7 @@
       ],
       "gridPos": {
         "x": 12,
-        "y": 30,
+        "y": 39,
         "w": 12,
         "h": 6
       }
@@ -338,9 +444,47 @@
       ],
       "gridPos": {
         "x": 0,
-        "y": 36,
+        "y": 45,
         "w": 24,
         "h": 6
+      }
+    },
+    {
+      "type": "timeseries",
+      "title": "Kafka Consumer Lag",
+      "gridPos": {
+        "x": 0,
+        "y": 51,
+        "w": 24,
+        "h": 6
+      },
+      "targets": [
+        {
+          "expr": "kafka_consumer_lag{service=\"$service\"}",
+          "legendFormat": "{{group}} / {{topic}}"
+        }
+      ]
+    },
+    {
+      "type": "timeseries",
+      "title": "MongoDB Slow Queries (p95)",
+      "gridPos": {
+        "x": 0,
+        "y": 57,
+        "w": 24,
+        "h": 6
+      },
+      "targets": [
+        {
+          "expr": "histogram_quantile(0.95, sum by (le, command)(rate(mongodb_driver_commands_seconds_bucket{service=\"$service\"}[5m]))) * 1000",
+          "legendFormat": "{{command}}"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "ms",
+          "decimals": 1
+        }
       }
     }
   ]
