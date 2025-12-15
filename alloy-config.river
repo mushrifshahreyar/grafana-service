@@ -27,11 +27,3 @@ otelcol.exporter.otlp "tempo" {
 }
 
 prometheus.exporter.self "default" {}
-
-prometheus.scrape "java_app" {
-  targets = [{
-    __address__ = "host.docker.internal:8181",
-    service    = "site-device-service",
-  }]
-  forward_to = []
-}
