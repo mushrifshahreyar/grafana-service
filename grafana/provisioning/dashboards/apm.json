@@ -1,375 +1,807 @@
 {
-  "id": null,
-  "uid": "apm-prod-datadog-parity-final",
-  "title": "APM – Service Overview (Production)",
-  "tags": [
-    "apm",
-    "otel",
-    "micrometer",
-    "webflux"
-  ],
-  "timezone": "browser",
-  "schemaVersion": 36,
-  "version": 1,
-  "refresh": "10s",
-  "templating": {
+  "annotations": {
     "list": [
       {
-        "name": "service",
-        "type": "query",
-        "datasource": "Prometheus",
-        "query": "label_values(http_server_requests_seconds_count, service)",
-        "multi": false
-      },
-      {
-        "name": "endpoint",
-        "type": "query",
-        "datasource": "Prometheus",
-        "query": "label_values(http_server_requests_seconds_count{service=\"$service\",uri!~\"/\\\\*\\\\*|/error|/actuator.*|UNKNOWN\"}, uri)",
-        "multi": true,
-        "includeAll": true
-      },
-      {
-        "name": "status",
-        "type": "query",
-        "datasource": "Prometheus",
-        "query": "label_values(http_server_requests_seconds_count, status)",
-        "multi": true,
-        "includeAll": true
+        "builtIn": 1,
+        "datasource": {
+          "type": "grafana",
+          "uid": "-- Grafana --"
+        },
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "type": "dashboard"
       }
     ]
   },
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 0,
+  "id": 2,
+  "links": [],
   "panels": [
     {
-      "type": "stat",
-      "title": "Requests / sec",
+      "fieldConfig": {
+        "defaults": {
+          "decimals": 2,
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": 0
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "reqps"
+        },
+        "overrides": []
+      },
       "gridPos": {
+        "h": 4,
+        "w": 6,
         "x": 0,
-        "y": 0,
-        "w": 6,
-        "h": 4
+        "y": 0
       },
+      "id": 1,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "percentChangeColorMode": "standard",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showPercentChange": false,
+        "textMode": "auto",
+        "wideLayout": true
+      },
+      "pluginVersion": "12.3.0",
       "targets": [
         {
-          "expr": "sum(rate(http_server_requests_seconds_count{service=\"$service\",uri!~\"/\\\\*\\\\*|/error|/actuator.*|UNKNOWN\"}[1m]))"
+          "expr": "sum(rate(http_server_requests_seconds_count{environment=\"$environment\",service=\"$service\",uri!~\"/\\\\*\\\\*|/error|/actuator.*|UNKNOWN\",uri!=\"/**\"}[$__rate_interval]))",
+          "refId": "A"
         }
       ],
-      "fieldConfig": {
-        "defaults": {
-          "unit": "reqps",
-          "decimals": 2
-        }
-      }
+      "title": "Requests / sec",
+      "type": "stat"
     },
     {
-      "type": "stat",
-      "title": "Errors / sec",
+      "fieldConfig": {
+        "defaults": {
+          "decimals": 2,
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": 0
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "reqps"
+        },
+        "overrides": []
+      },
       "gridPos": {
+        "h": 4,
+        "w": 6,
         "x": 6,
-        "y": 0,
-        "w": 6,
-        "h": 4
+        "y": 0
       },
+      "id": 2,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "percentChangeColorMode": "standard",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showPercentChange": false,
+        "textMode": "auto",
+        "wideLayout": true
+      },
+      "pluginVersion": "12.3.0",
       "targets": [
         {
-          "expr": "sum(rate(http_server_requests_seconds_count{service=\"$service\",status=~\"4..|5..\",uri!~\"/\\\\*\\\\*|/error|/actuator.*|UNKNOWN\"}[1m]))"
+          "expr": "sum(rate(http_server_requests_seconds_count{environment=\"$environment\",service=\"$service\",status=~\"4..|5..\",uri!~\"/\\\\*\\\\*|/error|/actuator.*|UNKNOWN\",uri!=\"/**\"}[$__rate_interval]))",
+          "refId": "A"
         }
       ],
-      "fieldConfig": {
-        "defaults": {
-          "unit": "reqps",
-          "decimals": 2
-        }
-      }
+      "title": "Errors / sec",
+      "type": "stat"
     },
     {
-      "type": "stat",
-      "title": "Error Rate %",
+      "fieldConfig": {
+        "defaults": {
+          "decimals": 2,
+          "mappings": [],
+          "max": 100,
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": 0
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "percent"
+        },
+        "overrides": []
+      },
       "gridPos": {
-        "x": 12,
-        "y": 0,
+        "h": 4,
         "w": 6,
-        "h": 4
+        "x": 12,
+        "y": 0
       },
+      "id": 3,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "percentChangeColorMode": "standard",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showPercentChange": false,
+        "textMode": "auto",
+        "wideLayout": true
+      },
+      "pluginVersion": "12.3.0",
       "targets": [
         {
-          "expr": "(sum(rate(http_server_requests_seconds_count{service=\"$service\",status=~\"4..|5..\",uri!~\"/\\\\*\\\\*|/error|/actuator.*|UNKNOWN\"}[1m])) / sum(rate(http_server_requests_seconds_count{service=\"$service\",uri!~\"/\\\\*\\\\*|/error|/actuator.*|UNKNOWN\"}[1m]))) * 100"
+          "expr": "100 * (sum(rate(http_server_requests_seconds_count{environment=\"$environment\",service=\"$service\",status=~\"4..|5..\",uri!~\"/\\\\*\\\\*|/error|/actuator.*|UNKNOWN\",uri!=\"/**\"}[$__rate_interval])) / sum(rate(http_server_requests_seconds_count{environment=\"$environment\",service=\"$service\",uri!~\"/\\\\*\\\\*|/error|/actuator.*|UNKNOWN\"}[$__rate_interval])) or vector(0))",
+          "legendFormat": "Error Rate",
+          "refId": "A"
         }
       ],
-      "fieldConfig": {
-        "defaults": {
-          "unit": "percent",
-          "decimals": 2
-        }
-      }
+      "title": "Error Rate %",
+      "type": "stat"
     },
     {
-      "type": "stat",
-      "title": "Total Requests",
-      "targets": [
-        {
-          "expr": "sum(http_server_requests_seconds_count{service=\"$service\",uri!~\"/\\\\*\\\\*|/error|/actuator.*|UNKNOWN\"})"
-        }
-      ],
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "fixedColor": "green",
+            "mode": "fixed"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": 0
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 6,
+        "x": 18,
+        "y": 0
+      },
+      "id": 4,
       "options": {
         "colorMode": "value",
         "graphMode": "none",
         "justifyMode": "center",
+        "orientation": "auto",
+        "percentChangeColorMode": "standard",
         "reduceOptions": {
           "calcs": [
             "lastNotNull"
-          ]
-        }
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showPercentChange": false,
+        "textMode": "auto",
+        "wideLayout": true
       },
+      "pluginVersion": "12.3.0",
+      "targets": [
+        {
+          "expr": "sum(increase(http_server_requests_seconds_count{environment=\"$environment\",service=\"$service\",uri!~\"/\\\\*\\\\*|/error|/actuator.*|UNKNOWN\",uri!=\"/**\"}[$__range]))",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "Total Requests",
+      "type": "stat"
+    },
+    {
+      "fieldConfig": {
+        "defaults": {
+          "decimals": 1,
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": 0
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "ms"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 6,
+        "x": 0,
+        "y": 4
+      },
+      "id": 5,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "percentChangeColorMode": "standard",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showPercentChange": false,
+        "textMode": "auto",
+        "wideLayout": true
+      },
+      "pluginVersion": "12.3.0",
+      "targets": [
+        {
+          "expr": "clamp_min(histogram_quantile(0.50, sum by (le)(rate(http_server_requests_seconds_bucket{environment=\"$environment\",service=\"$service\",uri!~\"/\\\\*\\\\*|/error|/actuator.*|UNKNOWN\",uri!=\"/**\"}[5m]))) * 1000, 0)",
+          "refId": "A"
+        }
+      ],
+      "title": "p50 Latency (ms)",
+      "type": "stat"
+    },
+    {
+      "fieldConfig": {
+        "defaults": {
+          "decimals": 1,
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": 0
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "ms"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 6,
+        "x": 6,
+        "y": 4
+      },
+      "id": 6,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "percentChangeColorMode": "standard",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showPercentChange": false,
+        "textMode": "auto",
+        "wideLayout": true
+      },
+      "pluginVersion": "12.3.0",
+      "targets": [
+        {
+          "expr": "clamp_min(histogram_quantile(0.75, sum by (le)(rate(http_server_requests_seconds_bucket{environment=\"$environment\",service=\"$service\",uri!~\"/\\\\*\\\\*|/error|/actuator.*|UNKNOWN\",uri!=\"/**\"}[5m]))) * 1000, 0)",
+          "refId": "A"
+        }
+      ],
+      "title": "p75 Latency (ms)",
+      "type": "stat"
+    },
+    {
+      "fieldConfig": {
+        "defaults": {
+          "decimals": 1,
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": 0
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "ms"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 6,
+        "x": 12,
+        "y": 4
+      },
+      "id": 7,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "percentChangeColorMode": "standard",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showPercentChange": false,
+        "textMode": "auto",
+        "wideLayout": true
+      },
+      "pluginVersion": "12.3.0",
+      "targets": [
+        {
+          "expr": "clamp_min(histogram_quantile(0.90, sum by (le)(rate(http_server_requests_seconds_bucket{environment=\"$environment\",service=\"$service\",uri!~\"/\\\\*\\\\*|/error|/actuator.*|UNKNOWN\",uri!=\"/**\"}[5m]))) * 1000, 0)",
+          "refId": "A"
+        }
+      ],
+      "title": "p90 Latency (ms)",
+      "type": "stat"
+    },
+    {
+      "fieldConfig": {
+        "defaults": {
+          "decimals": 1,
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": 0
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "ms"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 6,
+        "x": 18,
+        "y": 4
+      },
+      "id": 8,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "percentChangeColorMode": "standard",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showPercentChange": false,
+        "textMode": "auto",
+        "wideLayout": true
+      },
+      "pluginVersion": "12.3.0",
+      "targets": [
+        {
+          "expr": "clamp_min(histogram_quantile(0.95, sum by (le)(rate(http_server_requests_seconds_bucket{environment=\"$environment\",service=\"$service\",uri!~\"/\\\\*\\\\*|/error|/actuator.*|UNKNOWN\",uri!=\"/**\"}[5m]))) * 1000, 0)",
+          "refId": "A"
+        }
+      ],
+      "title": "p95 Latency (ms)",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "tempo",
+        "uid": "P214B5B846CF3925F"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "align": "auto",
+            "cellOptions": {
+              "type": "auto"
+            },
+            "filterable": true,
+            "footer": {
+              "reducers": []
+            },
+            "inspect": false,
+            "styleField": "Trace ID",
+            "wrapHeaderText": true,
+            "wrapText": true
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": 0
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 6,
+        "w": 24,
+        "x": 0,
+        "y": 8
+      },
+      "id": 19,
+      "options": {
+        "cellHeight": "sm",
+        "enablePagination": true,
+        "showHeader": true
+      },
+      "pluginVersion": "12.3.0",
+      "targets": [
+        {
+          "datasource": {
+            "type": "tempo",
+            "uid": "P214B5B846CF3925F"
+          },
+          "filters": [
+            {
+              "id": "7527c746",
+              "operator": "=",
+              "scope": "span"
+            },
+            {
+              "id": "service-name",
+              "isCustomValue": false,
+              "operator": "=",
+              "scope": "resource",
+              "tag": "service.name",
+              "value": [
+                "enl-reports-ng"
+              ],
+              "valueType": "string"
+            },
+            {
+              "id": "span-name",
+              "isCustomValue": false,
+              "operator": "=",
+              "scope": "span",
+              "tag": "name",
+              "value": [
+                "POST /emu_reports/configuration_report"
+              ],
+              "valueType": "string"
+            }
+          ],
+          "limit": 10000,
+          "metricsQueryType": "range",
+          "queryType": "traceqlSearch",
+          "refId": "A",
+          "serviceMapUseNativeHistograms": false,
+          "spss": 10,
+          "tableType": "traces"
+        }
+      ],
+      "title": "Configuration Report Spans",
+      "type": "table"
+    },
+    {
       "fieldConfig": {
         "defaults": {
           "color": {
-            "mode": "fixed",
-            "fixedColor": "green"
-          }
-        }
-      },
-      "gridPos": {
-        "x": 18,
-        "y": 0,
-        "w": 6,
-        "h": 4
-      }
-    },
-    {
-      "type": "stat",
-      "title": "p50 Latency (ms)",
-      "targets": [
-        {
-          "expr": "clamp_min(histogram_quantile(0.50, sum by (le)(rate(http_server_requests_seconds_bucket{service=\"$service\",uri!~\"/\\\\*\\\\*|/error|/actuator.*|UNKNOWN\"}[5m]))) * 1000, 0)"
-        }
-      ],
-      "gridPos": {
-        "x": 0,
-        "y": 4,
-        "w": 6,
-        "h": 4
-      },
-      "fieldConfig": {
-        "defaults": {
-          "unit": "ms",
-          "decimals": 1
-        }
-      }
-    },
-    {
-      "type": "stat",
-      "title": "p75 Latency (ms)",
-      "targets": [
-        {
-          "expr": "clamp_min(histogram_quantile(0.75, sum by (le)(rate(http_server_requests_seconds_bucket{service=\"$service\",uri!~\"/\\\\*\\\\*|/error|/actuator.*|UNKNOWN\"}[5m]))) * 1000, 0)"
-        }
-      ],
-      "gridPos": {
-        "x": 6,
-        "y": 4,
-        "w": 6,
-        "h": 4
-      },
-      "fieldConfig": {
-        "defaults": {
-          "unit": "ms",
-          "decimals": 1
-        }
-      }
-    },
-    {
-      "type": "stat",
-      "title": "p90 Latency (ms)",
-      "targets": [
-        {
-          "expr": "clamp_min(histogram_quantile(0.90, sum by (le)(rate(http_server_requests_seconds_bucket{service=\"$service\",uri!~\"/\\\\*\\\\*|/error|/actuator.*|UNKNOWN\"}[5m]))) * 1000, 0)"
-        }
-      ],
-      "gridPos": {
-        "x": 12,
-        "y": 4,
-        "w": 6,
-        "h": 4
-      },
-      "fieldConfig": {
-        "defaults": {
-          "unit": "ms",
-          "decimals": 1
-        }
-      }
-    },
-    {
-      "type": "stat",
-      "title": "p95 Latency (ms)",
-      "targets": [
-        {
-          "expr": "clamp_min(histogram_quantile(0.95, sum by (le)(rate(http_server_requests_seconds_bucket{service=\"$service\",uri!~\"/\\\\*\\\\*|/error|/actuator.*|UNKNOWN\"}[5m]))) * 1000, 0)"
-        }
-      ],
-      "gridPos": {
-        "x": 18,
-        "y": 4,
-        "w": 6,
-        "h": 4
-      },
-      "fieldConfig": {
-        "defaults": {
-          "unit": "ms",
-          "decimals": 1
-        }
-      }
-    },
-    {
-      "type": "timeseries",
-      "title": "Latency (p50 / p75 / p90 / p95)",
-      "gridPos": {
-        "x": 0,
-        "y": 8,
-        "w": 24,
-        "h": 6
-      },
-      "targets": [
-        {
-          "expr": "histogram_quantile(0.5, sum by (le)(rate(http_server_requests_seconds_bucket{service=\"$service\",uri!~\"/\\\\*\\\\*|/error|/actuator.*|UNKNOWN\"}[5m]))) * 1000",
-          "legendFormat": "p50"
-        },
-        {
-          "expr": "histogram_quantile(0.75, sum by (le)(rate(http_server_requests_seconds_bucket{service=\"$service\",uri!~\"/\\\\*\\\\*|/error|/actuator.*|UNKNOWN\"}[5m]))) * 1000",
-          "legendFormat": "p75"
-        },
-        {
-          "expr": "histogram_quantile(0.9, sum by (le)(rate(http_server_requests_seconds_bucket{service=\"$service\",uri!~\"/\\\\*\\\\*|/error|/actuator.*|UNKNOWN\"}[5m]))) * 1000",
-          "legendFormat": "p90"
-        },
-        {
-          "expr": "histogram_quantile(0.95, sum by (le)(rate(http_server_requests_seconds_bucket{service=\"$service\",uri!~\"/\\\\*\\\\*|/error|/actuator.*|UNKNOWN\"}[5m]))) * 1000",
-          "legendFormat": "p95"
-        }
-      ],
-      "fieldConfig": {
-        "defaults": {
-          "unit": "ms",
-          "decimals": 1
-        }
-      }
-    },
-    {
-      "type": "table",
-      "title": "Endpoint Latency (ms)",
-      "targets": [
-        {
-          "refId": "RPS",
-          "expr": "sum by (uri)(rate(http_server_requests_seconds_count{service=\"$service\",uri=~\"$endpoint\",uri!~\"/\\\\*\\\\*|/error|/actuator.*|UNKNOWN\"}[5m]))"
-        },
-        {
-          "refId": "P50",
-          "expr": "clamp_min(histogram_quantile(0.5, sum by (le, uri)(rate(http_server_requests_seconds_bucket{service=\"$service\",uri=~\"$endpoint\",uri!~\"/\\\\*\\\\*|/error|/actuator.*|UNKNOWN\"}[5m]))) * 1000, 0)"
-        },
-        {
-          "refId": "P75",
-          "expr": "clamp_min(histogram_quantile(0.75, sum by (le, uri)(rate(http_server_requests_seconds_bucket{service=\"$service\",uri=~\"$endpoint\",uri!~\"/\\\\*\\\\*|/error|/actuator.*|UNKNOWN\"}[5m]))) * 1000, 0)"
-        },
-        {
-          "refId": "P90",
-          "expr": "clamp_min(histogram_quantile(0.90, sum by (le, uri)(rate(http_server_requests_seconds_bucket{service=\"$service\",uri=~\"$endpoint\",uri!~\"/\\\\*\\\\*|/error|/actuator.*|UNKNOWN\"}[5m]))) * 1000, 0)"
-        },
-        {
-          "refId": "P95",
-          "expr": "clamp_min(histogram_quantile(0.95, sum by (le, uri)(rate(http_server_requests_seconds_bucket{service=\"$service\",uri=~\"$endpoint\",uri!~\"/\\\\*\\\\*|/error|/actuator.*|UNKNOWN\"}[5m]))) * 1000, 0)"
-        }
-      ],
-      "transformations": [
-        {
-          "id": "labelsToFields"
-        },
-        {
-          "id": "merge"
-        },
-        {
-          "id": "organize",
-          "options": {
-            "renameByName": {
-              "Value #RPS": "Requests / sec",
-              "Value #P50": "p50 latency",
-              "Value #P75": "p75 latency",
-              "Value #P90": "p90 latency",
-              "Value #P95": "p95 latency"
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "barWidthFactor": 0.6,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
             },
-            "order": [
-              "uri",
-              "Requests / sec",
-              "p50 latency",
-              "p75 latency",
-              "p90 latency",
-              "p95 latency"
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "showValues": false,
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "decimals": 1,
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": 0
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "ms"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 6,
+        "w": 24,
+        "x": 0,
+        "y": 14
+      },
+      "id": 10,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "hideZeros": false,
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "12.3.0",
+      "targets": [
+        {
+          "expr": "histogram_quantile(0.5, sum by (le)(rate(http_server_requests_seconds_bucket{environment=\"$environment\",service=\"$service\",uri!~\"/\\\\*\\\\*|/error|/actuator.*|UNKNOWN\",uri!=\"/**\"}[5m]))) * 1000",
+          "legendFormat": "p50",
+          "refId": "A"
+        },
+        {
+          "expr": "histogram_quantile(0.75, sum by (le)(rate(http_server_requests_seconds_bucket{environment=\"$environment\",service=\"$service\",uri!~\"/\\\\*\\\\*|/error|/actuator.*|UNKNOWN\",uri!=\"/**\"}[5m]))) * 1000",
+          "legendFormat": "p75",
+          "refId": "B"
+        },
+        {
+          "expr": "histogram_quantile(0.9, sum by (le)(rate(http_server_requests_seconds_bucket{environment=\"$environment\",service=\"$service\",uri!~\"/\\\\*\\\\*|/error|/actuator.*|UNKNOWN\",uri!=\"/**\"}[5m]))) * 1000",
+          "legendFormat": "p90",
+          "refId": "C"
+        },
+        {
+          "expr": "histogram_quantile(0.95, sum by (le)(rate(http_server_requests_seconds_bucket{environment=\"$environment\",service=\"$service\",uri!~\"/\\\\*\\\\*|/error|/actuator.*|UNKNOWN\",uri!=\"/**\"}[5m]))) * 1000",
+          "legendFormat": "p95",
+          "refId": "D"
+        }
+      ],
+      "title": "Latency (p50 / p75 / p90 / p95)",
+      "type": "timeseries"
+    },
+    {
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "align": "auto",
+            "cellOptions": {
+              "type": "auto"
+            },
+            "footer": {
+              "reducers": []
+            },
+            "inspect": false
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": 0
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
             ]
           }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 6,
+        "w": 24,
+        "x": 0,
+        "y": 20
+      },
+      "id": 12,
+      "options": {
+        "cellHeight": "sm",
+        "showHeader": true
+      },
+      "pluginVersion": "12.3.0",
+      "targets": [
+        {
+          "expr": "clamp_min(histogram_quantile(0.95, sum by (le, uri)(rate(http_server_requests_seconds_bucket{environment=\"$environment\",service=\"$service\",uri=~\"$endpoint\",uri!~\"/\\\\*\\\\*|/error|/actuator.*|UNKNOWN\",uri!=\"/**\"}[5m]))) * 1000, 0) > 1000",
+          "refId": "A"
         }
       ],
-      "gridPos": {
-        "x": 0,
-        "y": 14,
-        "w": 24,
-        "h": 6
+      "title": "Slow Endpoints (p95 > 1s)",
+      "type": "table"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "PBFA97CFB590B2093"
       },
       "fieldConfig": {
         "defaults": {
-          "unit": "ms",
-          "decimals": 1
+          "custom": {
+            "align": "auto",
+            "cellOptions": {
+              "type": "auto"
+            },
+            "filterable": true,
+            "footer": {
+              "reducers": []
+            },
+            "inspect": false,
+            "styleField": "status",
+            "wrapHeaderText": true,
+            "wrapText": true
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": 0
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
         },
         "overrides": [
           {
             "matcher": {
               "id": "byName",
-              "options": "Requests / sec"
+              "options": "status"
             },
             "properties": [
               {
-                "id": "unit",
-                "value": "reqps"
-              },
-              {
-                "id": "decimals",
-                "value": 2
+                "id": "custom.width",
+                "value": 196
               }
             ]
           }
         ]
       },
-      "options": {
-        "showHeader": true,
-        "sortBy": [
-          {
-            "displayName": "p95 latency",
-            "desc": true
-          }
-        ]
-      }
-    },
-    {
-      "type": "table",
-      "title": "Slow Endpoints (p95 > 1s)",
-      "targets": [
-        {
-          "expr": "clamp_min(histogram_quantile(0.95, sum by (le, uri)(rate(http_server_requests_seconds_bucket{service=\"$service\",uri=~\"$endpoint\",uri!~\"/\\\\*\\\\*|/error|/actuator.*|UNKNOWN\"}[5m]))) * 1000, 0) > 1000"
-        }
-      ],
       "gridPos": {
-        "x": 0,
-        "y": 20,
+        "h": 7,
         "w": 24,
-        "h": 6
-      }
-    },
-    {
-      "type": "table",
-      "title": "Top Errors (4xx / 5xx)",
+        "x": 0,
+        "y": 26
+      },
+      "id": 13,
+      "options": {
+        "cellHeight": "md",
+        "enablePagination": true,
+        "showHeader": true
+      },
+      "pluginVersion": "12.3.0",
       "targets": [
         {
-          "expr": "sum by (uri, status)(rate(http_server_requests_seconds_count{service=\"$service\",status=~\"4..|5..\",uri!~\"/\\\\*\\\\*|/error|/actuator.*|UNKNOWN\"}[5m]))"
+          "editorMode": "code",
+          "expr": "sum by (method, uri, status,service)(rate(http_server_requests_seconds_count{environment=\"$environment\",service=\"$service\",status=~\"4..|5..\",uri!~\"/\\\\*\\\\*|/error|/actuator.*|UNKNOWN\",uri!=\"/**\"}[5m]))",
+          "range": true,
+          "refId": "A"
         }
       ],
+      "title": "Top Errors (4xx / 5xx)",
       "transformations": [
         {
           "id": "labelsToFields"
@@ -380,6 +812,11 @@
         {
           "id": "organize",
           "options": {
+            "excludeByName": {
+              "Value": true
+            },
+            "includeByName": {},
+            "indexByName": {},
             "order": [
               "uri",
               "status",
@@ -391,101 +828,580 @@
           }
         }
       ],
-      "options": {
-        "showHeader": true
-      },
-      "gridPos": {
-        "x": 0,
-        "y": 26,
-        "w": 24,
-        "h": 7
-      }
+      "type": "table"
     },
     {
-      "type": "timeseries",
-      "title": "JVM Heap Used",
-      "targets": [
-        {
-          "expr": "jvm_memory_used_bytes{area=\"heap\",service=\"$service\"}",
-          "legendFormat": "heap"
-        }
-      ],
-      "gridPos": {
-        "x": 0,
-        "y": 33,
-        "w": 12,
-        "h": 6
-      }
-    },
-    {
-      "type": "timeseries",
-      "title": "CPU Usage",
-      "targets": [
-        {
-          "expr": "process_cpu_usage{service=\"$service\"}",
-          "legendFormat": "cpu"
-        }
-      ],
-      "gridPos": {
-        "x": 12,
-        "y": 39,
-        "w": 12,
-        "h": 6
-      }
-    },
-    {
-      "type": "timeseries",
-      "title": "GC Pause Time",
-      "targets": [
-        {
-          "expr": "rate(jvm_gc_pause_seconds_sum{service=\"$service\"}[1m])",
-          "legendFormat": "gc"
-        }
-      ],
-      "gridPos": {
-        "x": 0,
-        "y": 45,
-        "w": 24,
-        "h": 6
-      }
-    },
-    {
-      "type": "timeseries",
-      "title": "Kafka Consumer Lag",
-      "gridPos": {
-        "x": 0,
-        "y": 51,
-        "w": 24,
-        "h": 6
-      },
-      "targets": [
-        {
-          "expr": "kafka_consumer_lag{service=\"$service\"}",
-          "legendFormat": "{{group}} / {{topic}}"
-        }
-      ]
-    },
-    {
-      "type": "timeseries",
-      "title": "MongoDB Slow Queries (p95)",
-      "gridPos": {
-        "x": 0,
-        "y": 57,
-        "w": 24,
-        "h": 6
-      },
-      "targets": [
-        {
-          "expr": "histogram_quantile(0.95, sum by (le, command)(rate(mongodb_driver_commands_seconds_bucket{service=\"$service\"}[5m]))) * 1000",
-          "legendFormat": "{{command}}"
-        }
-      ],
       "fieldConfig": {
         "defaults": {
-          "unit": "ms",
-          "decimals": 1
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "barWidthFactor": 0.6,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "showValues": false,
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": 0
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 6,
+        "w": 12,
+        "x": 0,
+        "y": 33
+      },
+      "id": 14,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "hideZeros": false,
+          "mode": "single",
+          "sort": "none"
         }
-      }
+      },
+      "pluginVersion": "12.3.0",
+      "targets": [
+        {
+          "expr": "jvm_memory_used_bytes{area=\"heap\",environment=\"$environment\",service=\"$service\"}",
+          "legendFormat": "heap",
+          "refId": "A"
+        }
+      ],
+      "title": "JVM Heap Used",
+      "type": "timeseries"
+    },
+    {
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "barWidthFactor": 0.6,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "showValues": false,
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": 0
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 6,
+        "w": 12,
+        "x": 12,
+        "y": 33
+      },
+      "id": 15,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "hideZeros": false,
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "12.3.0",
+      "targets": [
+        {
+          "expr": "process_cpu_usage{environment=\"$environment\",service=\"$service\"}",
+          "legendFormat": "cpu",
+          "refId": "A"
+        }
+      ],
+      "title": "CPU Usage",
+      "type": "timeseries"
+    },
+    {
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "barWidthFactor": 0.6,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "showValues": false,
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": 0
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 6,
+        "w": 24,
+        "x": 0,
+        "y": 39
+      },
+      "id": 16,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "hideZeros": false,
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "12.3.0",
+      "targets": [
+        {
+          "expr": "rate(jvm_gc_pause_seconds_sum{environment=\"$environment\",service=\"$service\"}[$__rate_interval])",
+          "legendFormat": "gc",
+          "refId": "A"
+        }
+      ],
+      "title": "GC Pause Time",
+      "type": "timeseries"
+    },
+    {
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "barWidthFactor": 0.6,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "showValues": false,
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": 0
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 6,
+        "w": 24,
+        "x": 0,
+        "y": 45
+      },
+      "id": 17,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "hideZeros": false,
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "12.3.0",
+      "targets": [
+        {
+          "expr": "kafka_consumer_lag{environment=\"$environment\",service=\"$service\"}",
+          "legendFormat": "{{group}} / {{topic}}",
+          "refId": "A"
+        }
+      ],
+      "title": "Kafka Consumer Lag",
+      "type": "timeseries"
+    },
+    {
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "barWidthFactor": 0.6,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "showValues": false,
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "decimals": 1,
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": 0
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "ms"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 6,
+        "w": 24,
+        "x": 0,
+        "y": 51
+      },
+      "id": 18,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "hideZeros": false,
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "12.3.0",
+      "targets": [
+        {
+          "expr": "histogram_quantile(0.95, sum by (le, command)(rate(mongodb_driver_commands_seconds_bucket{environment=\"$environment\",service=\"$service\"}[5m]))) * 1000",
+          "legendFormat": "{{command}}",
+          "refId": "A"
+        }
+      ],
+      "title": "MongoDB Slow Queries (p95)",
+      "type": "timeseries"
     }
-  ]
+  ],
+  "preload": false,
+  "refresh": "10s",
+  "schemaVersion": 42,
+  "tags": [
+    "apm",
+    "otel",
+    "micrometer",
+    "webflux"
+  ],
+  "templating": {
+    "list": [
+      {
+        "current": {
+          "text": "local",
+          "value": "local"
+        },
+        "datasource": "Prometheus",
+        "includeAll": false,
+        "name": "environment",
+        "options": [
+          {
+            "selected": true,
+            "text": "local",
+            "value": "local"
+          }
+        ],
+        "query": "label_values(http_server_requests_seconds_count, environment)",
+        "type": "query"
+      },
+      {
+        "current": {
+          "text": "enl-reports-arbiter",
+          "value": "enl-reports-arbiter"
+        },
+        "datasource": "Prometheus",
+        "name": "service",
+        "options": [
+          {
+            "selected": false,
+            "text": "enl-java-service",
+            "value": "enl-java-service"
+          },
+          {
+            "selected": true,
+            "text": "enl-reports-arbiter",
+            "value": "enl-reports-arbiter"
+          },
+          {
+            "selected": false,
+            "text": "site-device-service",
+            "value": "site-device-service"
+          }
+        ],
+        "query": "label_values(http_server_requests_seconds_count{environment=\"$environment\"}, service)",
+        "type": "query"
+      },
+      {
+        "current": {
+          "text": [
+            "/emu_reports/configuration_report"
+          ],
+          "value": [
+            "/emu_reports/configuration_report"
+          ]
+        },
+        "datasource": "Prometheus",
+        "includeAll": true,
+        "multi": true,
+        "name": "endpoint",
+        "options": [
+          {
+            "selected": true,
+            "text": "/emu_reports/configuration_report",
+            "value": "/emu_reports/configuration_report"
+          }
+        ],
+        "query": "label_values(http_server_requests_seconds_count{environment=\"$environment\",service=\"$service\",uri!~\"/\\\\*\\\\*|/error|/actuator.*|UNKNOWN\",uri!=\"/**\"}, uri)",
+        "type": "query"
+      },
+      {
+        "current": {
+          "text": "All",
+          "value": [
+            "$__all"
+          ]
+        },
+        "datasource": "Prometheus",
+        "includeAll": true,
+        "multi": true,
+        "name": "status",
+        "options": [
+          {
+            "selected": false,
+            "text": "200",
+            "value": "200"
+          },
+          {
+            "selected": false,
+            "text": "204",
+            "value": "204"
+          },
+          {
+            "selected": false,
+            "text": "404",
+            "value": "404"
+          },
+          {
+            "selected": false,
+            "text": "500",
+            "value": "500"
+          },
+          {
+            "selected": false,
+            "text": "UNKNOWN",
+            "value": "UNKNOWN"
+          }
+        ],
+        "query": "label_values(http_server_requests_seconds_count{environment=\"$environment\"}, status)",
+        "type": "query"
+      }
+    ]
+  },
+  "time": {
+    "from": "now-1h",
+    "to": "now"
+  },
+  "timepicker": {},
+  "timezone": "browser",
+  "title": "APM – Service Overview (Production)",
+  "uid": "apm-prod-datadog-parity-final",
+  "version": 1
 }
